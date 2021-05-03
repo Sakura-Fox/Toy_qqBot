@@ -3,16 +3,17 @@
 #识别的结果存入recg_face.reslist
 import numpy as np
 from PIL import Image,ImageDraw
-import face_recognition
-import os
-import utility
+import face_recognition, os, utility
+
+
 known_face_path = "known_faces"
 known_face_encodings = []
 known_face_names = [
     "Guoguo", "Guoguo", "Guoguo", "Guoguo","Guoguo", "Guoguo", "Guoguo",
     "Shengsheng", "Shengsheng",
     "Haoge", "Haoge", "Haoge",
-    "Zege"
+    "Zege", "Zege", "Zege",
+    "Sange", "Sange"
 ]
 recg_res = False
 res_face_path = "res_imgs"

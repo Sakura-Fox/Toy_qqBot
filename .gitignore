@@ -1,0 +1,8 @@
+known_faces/
+mirai_imgs/
+res_imgs/
+Downloads/
+python-mirai/
+.vscode
+__pycache__
+Account.py

@@ -5,25 +5,37 @@ from mirai import (
 )
 import asyncio
 from typing import List
-import utility,recg_face
-qq = 123456 # 字段 qq 的值
-authKey = 'graia-mirai-api-http-authkey' # 字段 authKey 的值
-mirai_api_http_locate = 'localhost:8080/ws' # httpapi所在主机的地址端口,如果 setting.yml 文件里字段 "enableWebsocket" 的值为 "true" 则需要将 "/" 换成 "/ws", 否则将接收不到消息.
+import utility,recg_face,Account
 
-app = Mirai(f"mirai://{mirai_api_http_locate}?authKey={authKey}&qq={qq}")
+
+app = Mirai(f"mirai://{Account.mirai_api_http_locate}?authKey={Account.authKey}&qq={Account.qq}")
 
 @app.receiver("FriendMessage")
-async def event_gm(app: Mirai, friend: Friend):
-    await app.sendFriendMessage(friend, [
-        Plain(text="Hello, world!")
-    ])
+async def event_gm(app: Mirai, friend: Friend, message: MessageChain):
+    if friend.id == Account.admin:
+        aplain: Plain = message.getFirstComponent(Plain)
+        atext = aplain.text
+        if atext == "save image":
+            aimage: Image = message.getFirstComponent(Image)
+            if aimage is not None:
+                utility.download_imgae2(aimage.url,"Downloads/Images")
+                await app.sendFriendMessage(
+                    friend,
+                    [Plain(text = "已存储")]
+                )
+        else:
+            await app.sendFriendMessage(
+                    friend,
+                    [Plain(text = "Greetings!")]
+                )
+
 @app.receiver("MemberJoinEvent")
 async def member_join(app: Mirai, event: MemberJoinEvent):
     await app.sendGroupMessage(
         event.member.group.id,
         [
             At(target=event.member.id),
-            Plain(text="欢迎进群!")
+            Plain(text="欢迎欢迎!")
         ]
     )
 # @app.receiver("BotJoinGroupEvent") #不知为和这个annotation用不了
@@ -37,7 +49,7 @@ async def GMHandler(app: Mirai, group: Group, message: MessageChain):
     aat: At = message.getFirstComponent(At)
     replyFlag = 0
     if aat is not None:
-        if aat.target == qq:
+        if aat.target == Account.qq:
             aplain: Plain = message.getFirstComponent(Plain)
             replyFlag = 1
             if aplain is None:
